@@ -1,47 +1,36 @@
 start: statement+
 
-statement: "let" NAME "=" expr ("as" type)?    -> assign
-         | "print" "(" expr ")"               -> print_stmt
-         | "if" "(" expr ")" "[" statement+ "]" -> if_stmt
-         | NAME "=" expr                      -> reassign
+?statement: decl_stmt
+          | assign_stmt
+          | expr_stmt
+          | print_stmt
+          | if_stmt
 
-type: "int" | "str" | "char" | "float" | "bool"
+decl_stmt: "let" NAME "=" expr TYPE ";"
+assign_stmt: NAME "=" expr ";"
+expr_stmt: expr ";"
+print_stmt: "print" "(" expr ")" ";"
+if_stmt: "if" "(" condition ")" "{" statement+ "}" ["else" "{" statement+ "}"]
 
-?expr: expr "+" term                          -> add
-     | expr "-" term                          -> sub
-     | term
+condition: expr COMP expr
+COMP: "==" | "!=" | ">" | "<" | ">=" | "<="
 
-?term: term "*" factor                        -> mul
-     | term "/" factor                        -> div
-     | factor
 
-?factor: "(" expr ")"
-       | "-" factor                           -> neg
-       | comparison
+?expr: term
+     | expr "+" term   -> add
+     | expr "-" term   -> sub
 
-?comparison: comparison "<" comparison        -> lt
-           | comparison ">" comparison        -> gt
-           | comparison "<=" comparison       -> lte
-           | comparison ">=" comparison       -> gte
-           | comparison "==" comparison       -> eq
-           | comparison "!=" comparison       -> neq
-           | printable
+?term: factor
+     | term "*" factor -> mul
+     | term "/" factor -> div
 
-?printable: NAME
-          | STRING
-          | NUMBER
-          | CHARACTER
-          | "True"                            -> true
-          | "False"                           -> false
+?factor: NUMBER        -> number
+       | NAME          -> var
+       | "(" expr ")"
 
-// Tokens
-CHARACTER: "'" /./ "'"
-NUMBER: FLOAT | INT
+TYPE: "int"
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+NUMBER: /[0-9]+/
 
-%import common.CNAME -> NAME
-%import common.FLOAT
-%import common.INT
-%import common.ESCAPED_STRING -> STRING
 %import common.WS
-
 %ignore WS

@@ -1,159 +1,93 @@
-from lark import Lark, Transformer, v_args, Visitor, Token, Tree
+from lark import Lark, Transformer
+from lark import v_args
 
-class DeclarationCollector(Visitor):
-    def __init__(self):
-        self.variables = {}
-        self.declarations = []
-
-    def assign_num(self, tree):
-        name = str(tree.children[0])
-        value_node = tree.children[1]
-        typ = str(tree.children[2])
-        if name in self.variables:
-            raise ValueError(f"Variable '{name}' is already declared.")
-        self.declarations.append((name, value_node, typ))
-
-
-class Interpreter(Transformer):
-    def __init__(self):
-        self.variables = {}
-
-    def start(self, items):
-        for stmt in items:
-            if callable(stmt):
-                stmt()
-
-    def process_declarations(self, declarations):
-        for name, value_node, typ in declarations:
-            if isinstance(value_node, Token):
-                value = value_node.value
-                try:
-                    if typ == "int":
-                        self.variables[name] = int(float(value))
-                    elif typ == "float":
-                        self.variables[name] = float(value)
-                    elif typ == "bool":
-                        self.variables[name] = value == "True"
-                    elif typ == "str":
-                        self.variables[name] = str(value.strip('"'))
-                    elif typ == "char":
-                        self.variables[name] = str(value)[0]
-                except ValueError:
-                    raise ValueError(f"Invalid value for type {typ}: {value}")
-            else:
-                value = self.transform(value_node)
-                if typ == "int":
-                    self.variables[name] = int(value)
-                elif typ == "float":
-                    self.variables[name] = float(value)
-                elif typ == "bool":
-                    self.variables[name] = bool(value)
-                elif typ == "str":
-                    self.variables[name] = str(value)
-                elif typ == "char":
-                    self.variables[name] = str(value)[0]
-
-    def assign_num(self, _):
-        return lambda: None  # already processed in DeclarationCollector
-
-    def reassign(self, items):
-        name = str(items[0])
-        value = self.transform(items[1])
-        if name not in self.variables:
-            raise NameError(f"Variable '{name}' is not defined.")
-        expected_type = type(self.variables[name])
-        if not isinstance(value, expected_type):
-            try:
-                value = expected_type(value)
-            except Exception:
-                raise TypeError(f"Cannot assign type {type(value)} to {expected_type}")
-        self.variables[name] = value
-        return lambda: None
-
-    def print_stmt(self, items):
-        val = items[0]
-        return lambda: print(val)
-
-    def if_stmt(self, items):
-        condition = items[0]
-        stmts = items[1:]
-        return lambda: [stmt() for stmt in stmts] if condition else None
-
-    # Expression Operations
-    @v_args(inline=True)
-    def add(self, a, b): return a + b
-
-    @v_args(inline=True)
-    def sub(self, a, b): return a - b
-
-    @v_args(inline=True)
-    def mul(self, a, b): return a * b
-
-    @v_args(inline=True)
-    def div(self, a, b): return a / b
-
-    @v_args(inline=True)
-    def neg(self, a): return -a
-
-    @v_args(inline=True)
-    def lt(self, a, b): return a < b
-
-    @v_args(inline=True)
-    def lte(self, a, b): return a <= b
-
-    @v_args(inline=True)
-    def gt(self, a, b): return a > b
-
-    @v_args(inline=True)
-    def gte(self, a, b): return a >= b
-
-    @v_args(inline=True)
-    def eq(self, a, b): return a == b
-
-    @v_args(inline=True)
-    def neq(self, a, b): return a != b
-
-    # Literals
-    def true(self, _): return True
-    def false(self, _): return False
-
-    def NAME(self, token):
-        name = str(token)
-        if name in self.variables:
-            return self.variables[name]
-        raise NameError(f"Variable '{name}' not defined")
-
-    def NUMBER(self, token):
-        try:
-            return int(token)
-        except ValueError:
-            return float(token)
-
-    def STRING(self, token):
-        return token[1:-1]  # remove quotes
-
-    def CHARACTER(self, token):
-        return token[1:-1]
-
-# Load grammar
 with open("grammar.lark") as f:
     grammar = f.read()
 
-# Example program
-code = """
-let a = 10 as int
-print(a)
-"""
+parser = Lark(grammar, parser="lalr")
 
-# Compile
-parser = Lark(grammar, parser="lalr", start="start", lexer="contextual")
-tree = parser.parse(code)
+class Interpreter(Transformer):
+    def __init__(self):
+        self.env = {}
+        self.types = {}
 
-# Collect declarations
-collector = DeclarationCollector()
-collector.visit(tree)
+    def decl_stmt(self, items):
+        name = str(items[0])
+        value = items[1]
+        typ = str(items[2])
+        if typ == "int" and not isinstance(value, int):
+            raise TypeError(f"{name} must be int")
+        self.env[name] = value
+        self.types[name] = typ
 
-# Interpret
-interpreter = Interpreter()
-interpreter.process_declarations(collector.declarations)
-interpreter.transform(tree)
+    def assign_stmt(self, items):
+        name = str(items[0])
+        value = items[1]
+        if name not in self.env:
+            raise NameError(f"{name} not declared")
+        expected_type = self.types[name]
+        if expected_type == "int" and not isinstance(value, int):
+            raise TypeError(f"{name} must be int")
+        self.env[name] = value
+
+    def expr_stmt(self, items):
+        _ = items[0]  # We evaluate but don't use the result
+
+    def print_stmt(self, items):
+        value = items[0]
+        print(value)
+
+    def if_stmt(self, items):
+        cond = items[0]
+        then_block = items[1:-1]
+        else_block = items[-1]
+        block = then_block if cond else else_block
+        for stmt in block:
+            if callable(stmt):
+                stmt()
+
+    def condition(self, items):
+        left, op_token, right = items
+        op = str(op_token)
+        return {
+            "==": left == right,
+            "!=": left != right,
+            ">": left > right,
+            "<": left < right,
+            ">=": left >= right,
+            "<=": left <= right
+        }[op]
+
+
+    # def comparator(self, children):
+    #     print("comparator children:", children)
+    #     return str(children[0])
+
+    def add(self, items): return items[0] + items[1]
+    def sub(self, items): return items[0] - items[1]
+    def mul(self, items): return items[0] * items[1]
+    def div(self, items): return items[0] // items[1]
+
+    def number(self, token): return int(token[0])
+    def var(self, token):
+        name = str(token[0])
+        if name not in self.env:
+            raise NameError(f"{name} is not defined")
+        return self.env[name]
+
+def run(code):
+    tree = parser.parse(code)
+    interp = Interpreter()
+    interp.transform(tree)
+
+if __name__ == "__main__":
+    code = """
+        let a = 3 int;
+        print(a);
+        a=a+2;
+        if (a > 2) {
+            print(a * 2);
+        }
+        print(a + 2);
+    """
+    run(code)
