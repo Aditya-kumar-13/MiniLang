@@ -1,0 +1,47 @@
+start: statement+
+
+statement: "let" NAME "=" expr ("as" type)?    -> assign
+         | "print" "(" expr ")"               -> print_stmt
+         | "if" "(" expr ")" "[" statement+ "]" -> if_stmt
+         | NAME "=" expr                      -> reassign
+
+type: "int" | "str" | "char" | "float" | "bool"
+
+?expr: expr "+" term                          -> add
+     | expr "-" term                          -> sub
+     | term
+
+?term: term "*" factor                        -> mul
+     | term "/" factor                        -> div
+     | factor
+
+?factor: "(" expr ")"
+       | "-" factor                           -> neg
+       | comparison
+
+?comparison: comparison "<" comparison        -> lt
+           | comparison ">" comparison        -> gt
+           | comparison "<=" comparison       -> lte
+           | comparison ">=" comparison       -> gte
+           | comparison "==" comparison       -> eq
+           | comparison "!=" comparison       -> neq
+           | printable
+
+?printable: NAME
+          | STRING
+          | NUMBER
+          | CHARACTER
+          | "True"                            -> true
+          | "False"                           -> false
+
+// Tokens
+CHARACTER: "'" /./ "'"
+NUMBER: FLOAT | INT
+
+%import common.CNAME -> NAME
+%import common.FLOAT
+%import common.INT
+%import common.ESCAPED_STRING -> STRING
+%import common.WS
+
+%ignore WS
