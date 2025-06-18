@@ -124,6 +124,20 @@ class LangInterpreter(Interpreter):
             return self.visit(else_block)
         else:
             return None
+        
+    def while_statement(self, tree):
+        """Handle while loops: while [condition] [block]"""
+        condition_node = tree.children[0]
+        block_node = tree.children[1]
+
+        while True:
+            condition = self.visit(condition_node)
+            if not isinstance(condition, bool):
+                raise TypeMismatchError("Condition in while loop must be boolean")
+            if not condition:
+                break
+            self.visit(block_node)
+
     
     def block(self, tree):
         """Handle code blocks"""
@@ -335,8 +349,9 @@ def main():
     print("Syntax:")
     print("  Declaration: let var = value type;")
     print("  Assignment: var = value;")
-    print("  Print: print(expr) or print(expr1, expr2, ...);")
-    print("  If statement: if (condition) [ statements ] else [ statements ]")
+    print("  Print: print[expr] or print[expr1, expr2, ...];")
+    print("  If statement: if [condition] [ statements ] else [ statements ]")
+    print("  While loop: while [condition] [ statements ]")
     print()
     
     while True:

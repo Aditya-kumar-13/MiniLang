@@ -7,18 +7,22 @@ program: statement*
           | assignment ";"
           | print_statement ";"
           | if_statement
+          | while_statement
           | expr ";"
+
 
 declaration: "let" IDENTIFIER "=" expr TYPE_NAME
 
 assignment: IDENTIFIER "=" expr
 
-print_statement: "print" "(" print_args? ")"
+print_statement: "print" "[" print_args? "]"
 
 print_args: expr ("," expr)*
 
-if_statement: "if" "(" logic_expr ")" block
-            | "if" "(" logic_expr ")" block "else" block
+if_statement: "if" "[" logic_expr "]" block
+            | "if" "[" logic_expr "]" block "else" block
+
+while_statement: "while" "[" logic_expr "]" block
 
 block: "[" statement* "]"
      | statement
