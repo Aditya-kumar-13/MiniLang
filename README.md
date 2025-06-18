@@ -1,5 +1,5 @@
 
-# 🧠 **miniLang**
+# **MiniLang**
 
 > A Fast, LLVM-Compiled Programming Language with Static Typing and Inference
 
@@ -21,11 +21,11 @@
 
 ## ✨ Features
 
-- ⚡ **Blazing Fast Performance:** Achieves up to **112x speedup** compared to Python.
-- 💪 **Static Typing with Inference:** Catch type errors at compile time while writing less boilerplate.
-- 📦 **Core Data Types:** Supports `int` (32-bit), `float` (double), `str` (string), and `bool` (boolean).
-- 🧩 **Familiar Syntax:** Combines intuitive syntax with a unique block structure using brackets `[]`.
-- 🚀 **LLVM Backend:** Leverages LLVM for native performance and optimization.
+-  **Blazing Fast Performance:** Achieves up to **112x speedup** compared to Python.
+-  **Static Typing with Inference:** Catch type errors at compile time while writing less boilerplate.
+-  **Core Data Types:** Supports `int` (32-bit), `float` (double), `str` (string), and `bool` (boolean).
+-  **Familiar Syntax:** Combines intuitive syntax with a unique block structure using brackets `[]`.
+-  **LLVM Backend:** Leverages LLVM for native performance and optimization.
 
 ---
 
@@ -35,7 +35,7 @@
 
 - **Python:** 3.47 seconds  
 - **miniLang:** 0.031 seconds  
-- ✅ **Result:** ~112x faster than Python
+- **Result:** ~112x faster than Python
 
 ---
 
