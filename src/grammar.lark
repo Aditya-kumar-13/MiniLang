@@ -1,36 +1,83 @@
-start: statement+
 
-?statement: decl_stmt
-          | assign_stmt
-          | expr_stmt
-          | print_stmt
-          | if_stmt
+?start: program
 
-decl_stmt: "let" NAME "=" expr TYPE ";"
-assign_stmt: NAME "=" expr ";"
-expr_stmt: expr ";"
-print_stmt: "print" "(" expr ")" ";"
-if_stmt: "if" "(" condition ")" "{" statement+ "}" ["else" "{" statement+ "}"]
+program: statement*
 
-condition: expr COMP expr
-COMP: "==" | "!=" | ">" | "<" | ">=" | "<="
+?statement: declaration ";"
+          | assignment ";"
+          | print_statement ";"
+          | if_statement
+          | expr ";"
 
+declaration: "let" IDENTIFIER "=" expr TYPE_NAME
 
-?expr: term
-     | expr "+" term   -> add
-     | expr "-" term   -> sub
+assignment: IDENTIFIER "=" expr
+
+print_statement: "print" "(" print_args? ")"
+
+print_args: expr ("," expr)*
+
+if_statement: "if" "(" logic_expr ")" block
+            | "if" "(" logic_expr ")" block "else" block
+
+block: "[" statement* "]"
+     | statement
+
+?expr: logic_expr
+
+?logic_expr: logic_and_expr
+           | logic_expr "||" logic_and_expr  -> or_op
+
+?logic_and_expr: equality_expr
+               | logic_and_expr "&&" equality_expr  -> and_op
+
+?equality_expr: comparison_expr
+              | equality_expr "==" comparison_expr  -> eq
+              | equality_expr "!=" comparison_expr  -> ne
+
+?comparison_expr: arithmetic_expr
+                | comparison_expr "<" arithmetic_expr   -> lt
+                | comparison_expr "<=" arithmetic_expr  -> le
+                | comparison_expr ">" arithmetic_expr   -> gt
+                | comparison_expr ">=" arithmetic_expr  -> ge
+
+?arithmetic_expr: term
+                | arithmetic_expr "+" term  -> add
+                | arithmetic_expr "-" term  -> sub
 
 ?term: factor
-     | term "*" factor -> mul
-     | term "/" factor -> div
+     | term "*" factor  -> mul
+     | term "/" factor  -> div
+     | term "%" factor  -> mod
 
-?factor: NUMBER        -> number
-       | NAME          -> var
-       | "(" expr ")"
+?factor: unary_expr
 
-TYPE: "int"
-NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
-NUMBER: /[0-9]+/
+?unary_expr: primary
+           | "+" unary_expr  -> pos
+           | "-" unary_expr  -> neg
+           | "!" unary_expr  -> not_op
 
+?primary: number
+        | string
+        | boolean
+        | variable
+        | "(" expr ")"
+
+number: SIGNED_NUMBER
+string: ESCAPED_STRING
+boolean: TRUE | FALSE
+variable: IDENTIFIER
+
+TRUE: "true"
+FALSE: "false"
+
+TYPE_NAME: "int" | "float" | "str" | "bool"
+
+%import common.SIGNED_NUMBER
+%import common.ESCAPED_STRING
+%import common.CNAME -> IDENTIFIER
 %import common.WS
 %ignore WS
+
+COMMENT: "//" /[^\n]*/
+%ignore COMMENT
