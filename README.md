@@ -1,223 +1,202 @@
-```markdown
-# miniLang: A Fast, Statically-Typed Language
 
-## Description
+# 🧠 **miniLang**
 
-miniLang is a compiled programming language designed for speed and efficiency. It leverages static typing with type inference and transpiles directly to LLVM IR, resulting in significantly faster execution compared to interpreted languages like Python. This makes miniLang suitable for performance-critical applications where speed is paramount.
+> A Fast, LLVM-Compiled Programming Language with Static Typing and Inference
 
-## Features
+---
 
-*   ⚡ **Blazing Fast Performance:** Achieves up to 112x speedup compared to Python (see benchmarks below).
-*   💪 **Static Typing with Inference:** Catches type errors at compile time, improving code reliability.
-*   🔢 **Core Data Types:** Supports `int` (32-bit), `float` (double), `str` (string), and `bool` (boolean) data types.
-*   🔤 **Familiar Syntax:** Combines intuitive syntax elements with a unique block structure using square brackets.
-*   🚀 **LLVM Backend:** Leverages the power and optimization capabilities of the LLVM compiler infrastructure.
+![Language](https://img.shields.io/badge/language-miniLang-blueviolet)
+![Backend](https://img.shields.io/badge/backend-LLVM%2010%2B-orange)
+![Parser](https://img.shields.io/badge/parser-Lark-blue)
+![Performance](https://img.shields.io/badge/performance-112x%20faster%20than%20Python-brightgreen)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
-## Performance
+---
 
-We benchmarked miniLang against Python by summing integers up to 1 million. The results are as follows:
+## 📖 Description
 
-*   **Python:** 3.47 seconds
-*   **miniLang:** 0.031 seconds
+**miniLang** is a compiled programming language designed for speed and efficiency. It leverages static typing with inference and compiles to **LLVM IR** using a custom compiler written in Python.
 
-This demonstrates a **112x performance improvement** for this specific task.
+---
 
-## Technologies Used
+## ✨ Features
 
-*   Python
-*   Lark Parser Generator
-*   llvmlite
-*   LLVM
+- ⚡ **Blazing Fast Performance:** Achieves up to **112x speedup** compared to Python.
+- 💪 **Static Typing with Inference:** Catch type errors at compile time while writing less boilerplate.
+- 📦 **Core Data Types:** Supports `int` (32-bit), `float` (double), `str` (string), and `bool` (boolean).
+- 🧩 **Familiar Syntax:** Combines intuitive syntax with a unique block structure using brackets `[]`.
+- 🚀 **LLVM Backend:** Leverages LLVM for native performance and optimization.
 
-## Installation
+---
 
-1.  **Prerequisites:**
+## 📈 Performance
 
-    *   Python 3.7+
-    *   LLVM 10+
-2.  **Install Dependencies:**
+> We benchmarked `miniLang` by summing integers up to 1 million.
 
-    ```bash
-    pip install lark llvmlite
-    ```
+- **Python:** 3.47 seconds  
+- **miniLang:** 0.031 seconds  
+- ✅ **Result:** ~112x faster than Python
 
-## Language Syntax
+---
 
-### Variable Declaration
+## 🧾 Language Syntax
 
-```
-let variable = value type;
-```
-
-Example:
-
-```
+### 🧠 Variable Declaration
+```miniLang
 let x = 42 int;
 let name = "Hello" str;
 ```
 
-### Assignment
-
-```
-variable = value;
-```
-
-Example:
-
-```
-x = 43;
-```
-
-### Print Statements
-
-```
-print[expr];
-print[expr1, expr2];
-```
-
-Example:
-
-```
-print["The value of x is", x];
-```
-
-### Control Flow
-
-#### If/Else Statements
-
-```
-if [condition] [
-  // statements
-] else [
-  // statements
-]
-```
-
-Example:
-
-```
+### 🔁 Control Flow
+```miniLang
 if [x > 10] [
-  print["x is big"];
+    print["x is big"];
 ] else [
-  print["x is small"];
+    print["x is small"];
 ]
-```
 
-#### While Loops
-
-```
-while [condition] [
-  // statements
-]
-```
-
-Example:
-
-```
 while [x > 0] [
-  print[x];
-  x = x - 1;
+    print[x];
+    x = x - 1;
 ]
 ```
 
-### Operators
-
-*   **Arithmetic:** `+`, `-`, `*`, `/`, `%`
-*   **Comparison:** `==`, `!=`, `<`, `>`, `<=`, `>=`
-*   **Logical:** `&&`, `||`, `!`
-*   **Unary:** `+`, `-`
-
-### Comments
-
-```
-// single line comment
+### 📤 Printing
+```miniLang
+print["Hello, world!"];
+print[x, y];
 ```
 
-### Block Syntax
+### ⚙️ Operators
 
-miniLang uses square brackets `[]` to define code blocks.
+- Arithmetic: `+`, `-`, `*`, `/`, `%`
+- Comparison: `==`, `!=`, `<`, `>`, `<=`, `>=`
+- Logical: `&&`, `||`, `!`
+- Unary: `+`, `-`
 
-```
-[
-  // statements
-]
-```
-
-## Usage
-
-1.  **Compile your miniLang code:**
-
-    ```bash
-    python llvm_compiler.py your_program.lang > output.ll
-    ```
-
-2.  **Execute the generated LLVM IR using `lli`:**
-
-    ```bash
-    lli output.ll
-    ```
-
-## Example Programs
-
-### Hello World
-
-```lang
-let message = "Hello, world!" str;
-print[message];
+### 💬 Comments
+```miniLang
+// This is a comment
 ```
 
-### Factorial
+---
 
-```lang
+## ⚙️ Installation & Setup
+
+### 🔧 Requirements
+
+- Python 3.7+
+- LLVM 10+
+- Install dependencies:
+  ```bash
+  pip install lark llvmlite
+  ```
+
+### 🖥️ Supported Platforms
+
+- ✅ Windows
+- ✅ macOS
+- ✅ Linux
+
+---
+
+## 🚀 Usage Guide
+
+1. Write your program in a `.lang` file.
+2. Compile it to LLVM IR:
+   ```bash
+   python llvm_compiler.py example.lang > output.ll
+   ```
+3. Run the compiled IR:
+   ```bash
+   lli output.ll
+   ```
+
+---
+
+## 📂 Example Programs
+
+### 🔹 Hello World
+```miniLang
+print["Hello, world!"];
+```
+
+### 🔹 Factorial
+```miniLang
 let n = 5 int;
-let factorial = 1 int;
-let i = 1 int;
+let result = 1 int;
 
-while [i <= n] [
-  factorial = factorial * i;
-  i = i + 1;
+while [n > 1] [
+    result = result * n;
+    n = n - 1;
 ]
-
-print["Factorial of", n, "is", factorial];
+print["Factorial is", result];
 ```
 
-### Fibonacci
-
-```lang
-let n = 10 int;
+### 🔹 Fibonacci
+```miniLang
 let a = 0 int;
 let b = 1 int;
 let i = 0 int;
 
-while [i < n] [
-  print[a];
-  let temp = a + b int;
-  a = b;
-  b = temp;
-  i = i + 1;
+while [i < 10] [
+    print[a];
+    let temp = a int;
+    a = b;
+    b = temp + b;
+    i = i + 1;
 ]
 ```
 
-## Architecture Overview
+---
 
-The miniLang compilation process follows these steps:
-
-1.  **Parsing:** The `grammar.lark` file defines the language grammar. The Lark parser generates an Abstract Syntax Tree (AST) from the source code.
-2.  **Semantic Analysis:** The compiler performs type checking and other semantic validations on the AST.
-3.  **LLVM IR Generation:** The compiler translates the AST into LLVM Intermediate Representation (IR).
-4.  **Compilation:** The LLVM backend compiles the LLVM IR into executable code using `lli`.
+## 🏗️ Architecture Overview
 
 ```
-source.lang --> [Lark Parser] --> AST --> [Semantic Analysis] --> LLVM IR --> [LLVM Backend (lli)] --> executable
+Source Code (.lang)
+       ↓
+  [Lark Parser → AST]
+       ↓
+[LLVM IR Generation via llvmlite]
+       ↓
+  [Native Execution via lli]
 ```
 
-## Error Handling
+---
 
-The compiler includes error handling for:
+## 🛡️ Error Handling
 
-*   Syntax errors (detected by the Lark parser)
-*   Type errors (e.g., incompatible types in assignments)
-*   Undeclared variables
+- Compile-time detection of:
+  - Type mismatches
+  - Undeclared variables
+  - Invalid syntax
+- Clear, informative error messages
 
+---
+
+## 🗂 Repository Structure
 
 ```
+miniLang/
+├── grammar.lark         # Language grammar definition
+├── llvm_compiler.py     # Compiler: source → LLVM IR
+├── interpreter.py       # Optional interpreter (WIP)
+├── examples/            # Example programs in miniLang
+└── README.md            # Documentation
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Whether it's extending the language, improving the compiler, or adding features — feel free to fork, branch, and PR.
+
+---
+
+## 📜 License
+
+MIT License. See `LICENSE` for details.
+
+---
+
+> miniLang — Minimal syntax. Maximum speed.
