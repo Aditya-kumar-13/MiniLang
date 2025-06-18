@@ -1,0 +1,9 @@
+let i = 0 int;
+let sum = 0 int;
+
+while[i < 10000000][
+    sum = sum + i;
+    i = i + 1;
+]
+
+print[sum];
