@@ -174,29 +174,6 @@ Source Code (.lang)
 
 ---
 
-## 🗂 Repository Structure
 
-```
-miniLang/
-├── grammar.lark         # Language grammar definition
-├── llvm_compiler.py     # Compiler: source → LLVM IR
-├── interpreter.py       # Optional interpreter (WIP)
-├── examples/            # Example programs in miniLang
-└── README.md            # Documentation
-```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Whether it's extending the language, improving the compiler, or adding features — feel free to fork, branch, and PR.
-
----
-
-## 📜 License
-
-MIT License. See `LICENSE` for details.
-
----
 
 > miniLang — Minimal syntax. Maximum speed.
